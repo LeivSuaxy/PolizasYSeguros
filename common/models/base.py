@@ -3,6 +3,10 @@ from uuid import uuid4
 from django.utils import timezone
 
 class BaseModel(models.Model):
+    """
+    Base model for all models in the project. Special for maintaining audit data.
+    """
+
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

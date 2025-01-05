@@ -1,7 +1,7 @@
 from common.abstract.apiviews import BaseAdminApiView
-from common.strategy.authpermission import IsAdmin
 from ranges.api.serializer import RangeSerializerAdmin
 from ranges.services.rangeservice import RangeService
+from core.guards.permission_classes import IsAdmin
 
 # Create your views here.
 class RangeAdminAPIView(BaseAdminApiView):

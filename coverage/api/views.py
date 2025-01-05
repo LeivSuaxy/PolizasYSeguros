@@ -1,7 +1,8 @@
 from common.abstract.apiviews import BaseAdminApiView
-from common.strategy.authpermission import IsAdmin
+# from common.strategy.authpermission import IsAdmin
 from coverage.services.coverageservice import CoverageService
 from coverage.api.serializer import CoverageSerializerAdmin
+from core.guards.permission_classes import IsAdmin
 
 # Create your views here.
 class CoverageAdminAPIView(BaseAdminApiView):

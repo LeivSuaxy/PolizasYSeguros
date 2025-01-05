@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from rest_framework.views import APIView
-from common.abstract.service import BaseService
+from common.services.base import BaseService
 from django.core.cache import cache
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,7 +9,7 @@ from common.utils.cache_utils import delete_cache
 
 class BaseAdminApiView(APIView, ABC):
     """
-        Abstract class for management views.
+        Abstract class for management views for django-rest-framework.
 
         REQUIRED VARIABLES:
         - permission_classes: List of permission classes required to access the view.

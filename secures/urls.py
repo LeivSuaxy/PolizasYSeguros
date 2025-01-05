@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls')), # http://localhost:8000/auth/
     path('poliza/', include('poliza.urls')), # http://localhost:8000/poliza/
+    path('coverage/', include('coverage.urls')), # http://localhost:8000/coverage/
+    path('ranges/', include('ranges.urls')), # http://localhost:8000/ranges/
 ]

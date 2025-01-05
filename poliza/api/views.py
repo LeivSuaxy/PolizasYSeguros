@@ -1,7 +1,7 @@
-from common.strategy.authpermission import IsAdmin
 from poliza.api.serializer import PolizaSerializerAdmin
 from poliza.services.polizaservice import PolizaService
 from common.abstract.apiviews import BaseAdminApiView
+from core.guards.permission_classes import IsAdmin
 
 
 # Create your views here.
