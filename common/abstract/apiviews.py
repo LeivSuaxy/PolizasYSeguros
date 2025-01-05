@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from rest_framework.views import APIView
 from common.abstract.service import BaseService
 from django.core.cache import cache
@@ -6,7 +7,7 @@ from rest_framework import status
 from rest_framework.serializers import ModelSerializer
 from common.utils.cache_utils import delete_cache
 
-class BaseAdminApiView(APIView):
+class BaseAdminApiView(APIView, ABC):
     """
         Abstract class for management views.
 
@@ -19,12 +20,30 @@ class BaseAdminApiView(APIView):
         - serializer_class: Serializer class used to validate and transform data.
     """
 
-    permission_classes = []
-    service: BaseService | object = None
-    cache_key: str = None
-    object_name_many: str = None
-    object_name_single: str = None
-    serializer_class: ModelSerializer = None
+    @property
+    @abstractmethod
+    def service(self) -> BaseService:
+        pass
+
+    @property
+    @abstractmethod
+    def cache_key(self) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def object_name_many(self) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def object_name_single(self) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def serializer_class(self) -> ModelSerializer:
+        pass
 
     def get(self, request):
         if cache.get(self.cache_key):
@@ -52,8 +71,22 @@ class BaseAdminApiView(APIView):
     def put(self, request):
         delete_cache(self.cache_key)
 
-        serializer = self.serializer_class(data=request.data, context={'request': request})
+        data = self.service.get_by_id(request.data['id'])
+        if data is None:
+            return Response({'message': f'{self.object_name_single} not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.serializer_class(data, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        delete_cache(self.cache_key)
+
+        data = self.service.get_by_id(request.data['id'])
+        if data is None:
+            return Response({'message': f'{self.object_name_single} not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        data.delete()
+        return Response({'message': f'{self.object_name_single} deleted'}, status=status.HTTP_200_OK)
