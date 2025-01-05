@@ -7,18 +7,18 @@ from rest_framework import status
 from rest_framework.serializers import ModelSerializer
 from common.utils.cache_utils import delete_cache
 
-class BaseAdminApiView(APIView, ABC):
+class BaseApiView(APIView, ABC):
     """
-        Abstract class for management views for django-rest-framework.
+                Abstract class for management views for django-rest-framework.
 
-        REQUIRED VARIABLES:
-        - permission_classes: List of permission classes required to access the view.
-        - service: Instance of the service that handles the business logic.
-        - cache_key: Key used to store and retrieve data in the cache.
-        - object_name_many: Plural name of the object, used in response messages.
-        - object_name_single: Name of the object in singular, used in response messages.
-        - serializer_class: Serializer class used to validate and transform data.
-    """
+                REQUIRED VARIABLES:
+                - permission_classes: List of permission classes required to access the view.
+                - service: Instance of the service that handles the business logic.
+                - cache_key: Key used to store and retrieve data in the cache.
+                - object_name_many: Plural name of the object, used in response messages.
+                - object_name_single: Name of the object in singular, used in response messages.
+                - serializer_class: Serializer class used to validate and transform data.
+            """
 
     @property
     @abstractmethod
@@ -51,7 +51,8 @@ class BaseAdminApiView(APIView, ABC):
 
         data = self.service.get_all()
         if not data:
-            return Response({'message': f'There are not {self.object_name_many} in database'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': f'There are not {self.object_name_many} in database'},
+                            status=status.HTTP_404_NOT_FOUND)
 
         serializer = self.serializer_class(data, many=True)
         if serializer.is_valid():
@@ -59,6 +60,7 @@ class BaseAdminApiView(APIView, ABC):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class BaseAdminApiView(BaseApiView, ABC):
     def post(self, request):
         delete_cache(self.cache_key)
 
@@ -90,3 +92,6 @@ class BaseAdminApiView(APIView, ABC):
 
         data.delete()
         return Response({'message': f'{self.object_name_single} deleted'}, status=status.HTTP_200_OK)
+
+class BaseUserApiView(BaseApiView, ABC):
+    pass
